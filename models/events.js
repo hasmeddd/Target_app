@@ -5,6 +5,8 @@ const eventSchema = new mongoose.Schema({
     start: Date,
     end: Date,
     details: String,
+    status: Boolean,
+    more: Array,
     userId: {
         type: mongoose.Schema.Types.ObjectId, // Sử dụng kiểu ObjectId để tham chiếu đến ID của người dùng
         ref: 'User'

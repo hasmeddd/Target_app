@@ -1,9 +1,9 @@
-<!-- Modal bảng công việc -->
+<!-- Task Table Modal -->
 <div class="modal fade" id="task_table_modal" tabindex="-1" role="dialog" aria-labelledby="taskTableLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="taskTableLabel">Task Table</h5>
+                <h5 class="modal-title" id="taskTableLabel">Sự kiện trong ngày</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">×</span>
                 </button>
@@ -12,23 +12,21 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th scope="col">Task Name</th>
-                            <th scope="col">Start Date</th>
-                            <th scope="col">End Date</th>
-                            <th scope="col">Time</th>
-                            <th scope="col">Details</th>
-                            <th scope="col">Config</th>
+                            <th scope="col">Tên</th>
+                            <th scope="col">Thời gian</th>
+                            <th scope="col">Chi tiết</th>
+                            <th scope="col">Trạng thái</th>
+                            <th scope="col">Xử lí</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Add rows dynamically from JavaScript -->
+                        <!-- Table content will be populated dynamically -->
                     </tbody>
                 </table>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
             </div>
         </div>
     </div>
 </div>
-<!-- End modal bảng công việc -->

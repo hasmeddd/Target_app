@@ -1,0 +1,41 @@
+<%- include('layout/header') %>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <h2>Danh mục</h2>
+                <ul class="nav flex-column">
+                    <li class="nav-item"><a class="nav-link active" href="#">Danh mục 1</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Danh mục 2</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Danh mục 3</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <!-- Content -->
+            <div class="content">
+                <!-- Your content here -->
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="stats">
+                                <h2>Thống kê tổng quan</h2>
+                                <p><strong>Số người dùng:</strong> 1000</p>
+                                <p><strong>Số bài viết:</strong> 500</p>
+                                <p><strong>Số lượt truy cập:</strong> 10000</p>
+                            </div>
+                            <div class="chart" id="userChart"></div>
+                            <div class="chart" id="postChart"></div>
+                            <div class="chart" id="visitChart"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<%- include('layout/footer') %>

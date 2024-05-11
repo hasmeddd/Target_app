@@ -3,10 +3,12 @@ const mongoose = require('mongoose');
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
-        unique: true
+        unique: true,
+        require: true
     },
     password: {
-        type: String
+        type: String,
+        require: true
     }
 });
 

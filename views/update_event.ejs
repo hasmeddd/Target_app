@@ -1,0 +1,78 @@
+<!-- Start Update Event Modal -->
+<div class="modal fade" id="update_event_modal" tabindex="-1" role="dialog" aria-labelledby="updateEventLabel" aria-hidden="true" >
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateEventLabel">Cập nhật sự kiện</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="img-container">
+                    <div class="row">
+                        <div class="col-sm-12">  
+                            <div class="form-group">
+                                <label for="update_event_name">Tên sự kiện</label>
+                                <input type="text" name="update_event_name" id="update_event_name" class="form-control" placeholder="Enter updated event name">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">  
+                            <div class="form-group">
+                                <label for="update_event_start_date">Ngày bắt đầu</label>
+                                <input type="date" name="update_event_start_date" id="update_event_start_date" class="form-control" placeholder="Event start date">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">  
+                            <div class="form-group">
+                                <label for="update_event_start_time">Thời gian bắt đầu</label>
+                                <input type="time" name="update_event_start_time" id="update_event_start_time" class="form-control" placeholder="Event start time">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">  
+                            <div class="form-group">
+                                <label for="update_event_end_date">Ngày kết thúc</label>
+                                <input type="date" name="update_event_end_date" id="update_event_end_date" class="form-control" placeholder="Event end date">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">  
+                            <div class="form-group">
+                                <label for="update_event_end_time">Thời gian kết thúc</label>
+                                <input type="time" name="update_event_end_time" id="update_event_end_time" class="form-control" placeholder="Event end time">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">  
+                            <div class="form-group">
+                                <label for="update_event_details">Chi tiết</label>
+                                <textarea name="update_event_details" id="update_event_details" class="form-control" placeholder="Enter updated event details"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">  
+                            <div class="form-group">
+                                <label for="update_event_status">Trạng thái</label>
+                                <select name="update_event_status" id="update_event_status" class="form-control">
+                                    <option value="false">Chưa hoàn thành</option>
+                                    <option value="true">Đã hoàn thành</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="update_event()">Cập nhật sự kiện</button>
+                <button type="button" class="btn btn-primary" onclick="delete_event()">Xóa sự kiện</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Update Event Modal -->

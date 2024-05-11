@@ -33,7 +33,7 @@ app.use((req, res, next) => {
     delete req.session.message;
     next();
 })
-
+app.use(express.static('public'));
 // set template engine
 app.set("view engine", "ejs");
 
