@@ -22,10 +22,10 @@ router.get("/signup", (req,res) =>{
 
 //register User
 router.post("/signup", async (req, res) => {
-    const { username, password } = req.body;
+    const { username, password, email } = req.body;
     
     // Kiểm tra tính hợp lệ của dữ liệu đầu vào
-    if (!username || !password) {
+    if (!username || !password || !email) {
       return res.status(400).send("Username and password are required");
     }
   
@@ -35,7 +35,7 @@ router.post("/signup", async (req, res) => {
 
   
       // Tạo một người dùng mới với mật khẩu đã được hash
-      const newUser = new User({ username, password: hashedPassword });
+      const newUser = new User({ username, password: hashedPassword, email });
   
       // Lưu người dùng vào cơ sở dữ liệu
       const savedUser = await newUser.save();
