@@ -19,13 +19,13 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <FontAwesomeIcon icon="fa-regular fa-calendar-xmark" />
     
-    
     <link rel="stylesheet" href="/style.css">
+    <script src="/app.js"></script>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a href="" class="navbar-brand"><i class="fas fa-home me-1"></i>Home</a>
+            <a href="/" class="navbar-brand"><i class="fas fa-home me-1"></i>Home</a>
             <button class="navbar-toggler" data-bs-target="#my-nav"
             data-bs-toggle="collapse" aria-controls="my-nav" aria-expanded="false"
             aria-label="Toggle navigation">
@@ -33,11 +33,9 @@
             </button>
             <div id="my-nav" class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a href="/report" class="nav-link"><i class="fa-solid fa-chart-simple"></i> Thống kê</a>
-                    </li>                    
                     <% if (!user) { %>
-                        <!-- Display login and signup buttons if user is not logged in -->
+                        <!-- Hiển thị nút đăng nhập và đăng ký nếu người dùng chưa đăng nhập -->
+                        
                         <li class="nav-item active">
                             <a href="/login" class="nav-link"><i class="fas fa-sign-in-alt me-1"></i>Login</a>
                         </li>
@@ -45,6 +43,10 @@
                             <a href="/signup" class="nav-link"><i class="fas fa-user-plus me-1"></i>Signup</a>
                         </li>
                     <% } else { %>
+                        <li class="nav-item">
+                            <a href="/report" class="nav-link"><i class="fa-solid fa-chart-simple"></i> Thống kê</a>
+                        </li>  
+                        <!-- Hiển thị dropdown menu với tên người dùng và các tùy chọn nếu người dùng đã đăng nhập -->
                         <li class="nav-item dropdown active">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <span>User: <%= user.username %></span>
@@ -63,3 +65,4 @@
             </div>
         </div>
     </nav>
+    

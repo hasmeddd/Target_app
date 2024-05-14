@@ -22,6 +22,7 @@ router.get("/signup", (req,res) =>{
 
 //register User
 router.post("/signup", async (req, res) => {
+    const user = req.session.user;
     const { username, password, email } = req.body;
     
     // Kiểm tra tính hợp lệ của dữ liệu đầu vào
@@ -30,26 +31,37 @@ router.post("/signup", async (req, res) => {
     }
   
     try {
-      // Tạo hash từ mật khẩu người dùng
-      const hashedPassword = await bcrypt.hash(password, 10);
+        const existingUser = await User.findOne({ $or: [{ username }] });
+        if (existingUser) {
+            req.session.message = { type: 'danger', message: "Tên người dùng đã tồn tại" };
+            return res.render("signup", { title: "Đăng ký", user: user, message: req.session.message });
+        }
+        // Tạo hash từ mật khẩu người dùng
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-  
-      // Tạo một người dùng mới với mật khẩu đã được hash
-      const newUser = new User({ username, password: hashedPassword, email });
-  
-      // Lưu người dùng vào cơ sở dữ liệu
-      const savedUser = await newUser.save();
-      
-      // Ẩn thông tin nhạy cảm và chuyển hướng đến trang đăng nhập sau khi đăng ký thành công
-      res.redirect("/");
+    
+        // Tạo một người dùng mới với mật khẩu đã được hash
+        const newUser = new User({ username, password: hashedPassword, email });
+    
+        // Lưu người dùng vào cơ sở dữ liệu
+        const savedUser = await newUser.save();
+        
+        // Ẩn thông tin nhạy cảm và chuyển hướng đến trang đăng nhập sau khi đăng ký thành công
+        req.session.message = { type: 'success', message: "Đăng ký tài khoản thành công" };
+        res.render("login", {title: "Đăng nhập", user: user, message: req.session.message });
     } catch (error) {
-      console.error("Error signing up:", error);
-      res.status(500).send("Internal Server Error");
+        console.error("Error signing up:", error);
+        res.status(500).send("Internal Server Error");
     }
-  });
+});
+
+
 // Route hiển thị trang chủ
 router.get("/", async (req, res) => {
     try {
+        const message = req.session.message; // Lấy thông báo từ session
+        req.session.message = null; // Xóa thông báo từ session sau khi sử dụng
+
         const user = req.session.user;
         // Kiểm tra xem người dùng đã đăng nhập hay chưa
         if (!req.session.user) {
@@ -64,7 +76,11 @@ router.get("/", async (req, res) => {
         const events = await Event.find({ userId }).exec();
 
         // Render trang chủ với danh sách sự kiện
-        res.render('index', { title: "Calendar App", events: events, user: user });
+        if (message && typeof message === 'object') {
+            res.render('index', { title: "Calendar App", events: events, user: user, message });
+        } else {
+            res.render('index', { title: "Calendar App", events: events, user: user });
+        }
     } catch (error) {
         console.error("Error fetching events:", error);
         res.status(500).send("Internal server error");
@@ -81,17 +97,29 @@ router.post("/login", async (req, res) => {
         // console.log(username, password)
         
         if (!user) {
-            return res.render("login", { error: "User not found", title: "Login" });
+            req.session.message = {
+                type: 'danger',
+                message: 'User không tồn tại'
+            };
+            return res.render("login", { message: req.session.message, title: "Login", user });
         }
 
         const isPasswordMatch = await bcrypt.compare(password, user.password);
         if (isPasswordMatch) {
             // Lưu thông tin người dùng vào session
             req.session.user = user;
+            req.session.message = {
+                type: 'success',
+                message: 'Đăng nhập thành công'
+            };
             // console.log(user);
             return res.redirect("/"); // Chuyển hướng đến trang chủ sau khi đăng nhập thành công
         } else {
-            return res.render("login", { error: "Wrong password", title: "Login" });
+            req.session.message = {
+                type: 'danger',
+                message: 'Sai mật khẩu'
+            };
+            return res.render("login", { message: req.session.message, title: "Login", user });
         }
     } catch (error) {
         console.error("Error logging in:", error);
@@ -158,7 +186,6 @@ router.post('/addEvent', async(req,res) => {
         res.status(500).send('Lỗi máy chủ nội bộ');
     }
 });
-
 
 // Cập nhật sự kiện route
 router.post('/update/:id', async (req, res) => {
