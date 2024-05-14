@@ -1,5 +1,18 @@
 <%- include('layout/header') %>
+    <% if (message) { %>
+        <div id="alert" class="alert alert-dismissible fade show alert-<%= message.type %>" role="alert">
+            <strong><%= message.message %></strong>
+        </div>
+    <% } %>
 
+    <script>
+        $(document).ready(function(){
+            // Đợi 3 giây sau đó tự động tắt thông báo
+            setTimeout(function(){
+                $("#alert").alert('close');
+            }, 3000);
+        });
+    </script>
     <div class="form-container-ls">
         <h2>Đăng nhập</h2>
         <form action="/login" method="post">
