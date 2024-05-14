@@ -42,8 +42,12 @@ function save_event() {
         }
     });
 }
-
-
+// show modal add_event
+$(document).ready(function() {
+    $('#add-event-btn').click(function() {
+        $('#event_entry_modal').modal('show');
+    });
+});
 function update_event() {
     var updatedEventName = $('#update_event_name').val();
     var updatedEventStartDate = $('#update_event_start_date').val();

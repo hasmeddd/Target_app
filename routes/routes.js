@@ -142,7 +142,7 @@ router.get("/logout", (req, res) => {
 router.get("/events", async (req, res) => {
     try {
         const userId = req.session.user._id;  // Thay bằng const userId = req.user.id; khi đã thực hiện xác thực người dùng
-        const events = await Event.find({ userId }).exec(); // Lấy danh sách sự kiện của một người dùng cụ thể
+        const events = await Event.find({ userId, status: false  }).exec(); // Lấy danh sách sự kiện của một người dùng cụ thể
         res.json(events); // Trả về danh sách sự kiện dưới dạng JSON
     } catch (error) {
         console.error("Error fetching events:", error);
@@ -156,7 +156,7 @@ router.get("/events/date", async (req, res) => {
         const endDate = req.query.end; // Lấy ngày kết thúc từ tham số trên URL
         const userId = req.session.user._id; // Thay bằng const userId = req.user.id; khi đã thực hiện xác thực người dùng
         // Thực hiện truy vấn cơ sở dữ liệu để lấy danh sách sự kiện trong khoảng thời gian được yêu cầu
-        const events = await Event.find({ userId, start: { $gte: startDate }, end: { $lte: endDate } }).exec();
+        const events = await Event.find({ userId, start: { $gte: startDate }, end: { $lte: endDate } , status: false  }).exec();
         res.json(events); // Trả về danh sách sự kiện dưới dạng JSON
     } catch (error) {
         console.error("Error fetching events:", error);
