@@ -4,8 +4,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 const session = require('express-session');
 
-
 const app = express();
+app.use(express.json());
+
+
 const PORT = process.env.PORT || 4000
 
 // database connection
@@ -20,7 +22,7 @@ db.once("open", () => console.log("Connected to the database!"));
     
 // milddlewares
 app.use(express.urlencoded({extended: false}));
-app.use(express.json());
+
 
 app.use(session({
     secret: '123',
