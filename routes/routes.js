@@ -31,9 +31,9 @@ router.post("/signup", async (req, res) => {
     }
   
     try {
-        const existingUser = await User.findOne({ $or: [{ username }] });
+        const existingUser = await User.findOne({ $or: [{ username }, { email }] });
         if (existingUser) {
-            req.session.message = { type: 'danger', message: "Tên người dùng đã tồn tại" };
+            req.session.message = { type: 'danger', message: "Tên người dùng hoặc email đã tồn tại" };
             return res.render("signup", { title: "Đăng ký", user: user, message: req.session.message });
         }
         // Tạo hash từ mật khẩu người dùng
