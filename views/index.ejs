@@ -47,7 +47,7 @@
                         events.forEach(function(event) {
                             var row = '<tr>' +
                                 '<td>' + event.title + '</td>' +
-                                '<td>' + moment(event.start).format('hh:mm:A - DD/MM/YYYY') +' -> '+ moment(event.end).format('hh:mm:A - DD/MM/YYYY') + '</td>' +
+                                '<td>' + moment(event.start).format('DD/MM/YYYY') +' -> '+ moment(event.end).format('DD/MM/YYYY') + '</td>' +
                                 '<td>' + event.details + '</td>' +
                                 '<td>' + (event.status ? '<i class="fa-sharp fa-regular fa-calendar-check text-success"></i>' : '<i class="fa-regular fa-calendar-xmark text-danger"></i>') + '</td>' +
                                 '<td><a href="#" class="text-primary"><i class="fas fa-plus fa-lg mx-1"></i></a></td>' +
@@ -79,19 +79,19 @@
                 var eventStart = info.event.start;
                 var eventEnd = info.event.end;
                 var eventDetails = info.event.extendedProps.details;
-                // Chia tách ngày và giờ bắt đầu
+                // // Chia tách ngày và giờ bắt đầu
                 var eventStartDate = eventStart.toISOString().slice(0,10);
-                var eventStartTime = eventStart.toTimeString().slice(0,5);
-                // Chia tách ngày và giờ kết thúc
+                // var eventStartTime = eventStart.toTimeString().slice(0,5);
+                // // Chia tách ngày và giờ kết thúc
                 var eventEndDate = eventEnd ? eventEnd.toISOString().slice(0,10) : '';
-                var eventEndTime = eventEnd ? eventEnd.toTimeString().slice(0,5) : '';
+                // var eventEndTime = eventEnd ? eventEnd.toTimeString().slice(0,5) : '';
 
                 // Cập nhật nội dung của modal với dữ liệu từ sự kiện
                 $('#update_event_name').val(eventName);
                 $('#update_event_start_date').val(eventStartDate);
-                $('#update_event_start_time').val(eventStartTime);
+                // $('#update_event_start_time').val(eventStartTime);
                 $('#update_event_end_date').val(eventEndDate);
-                $('#update_event_end_time').val(eventEndTime);
+                // $('#update_event_end_time').val(eventEndTime);
                 $('#update_event_details').val(eventDetails);
 
                 // Tạo URL mới với eventId

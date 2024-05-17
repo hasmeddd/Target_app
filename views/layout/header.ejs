@@ -46,6 +46,11 @@
                             <a href="/users" class="nav-link"><i class="fa-solid fa-chart-simple"></i> User</a>
                         </li>  
                     <% } else { %>
+                        <% if (user.role) { %>
+                            <li class="nav-item active">
+                                <a href="/admin" class="nav-link"><i class="fa-solid fa-chart-simple"></i>Quản lí</a>
+                            </li> 
+                        <% } %> 
                         <li class="nav-item">
                             <a href="/report" class="nav-link"><i class="fa-solid fa-chart-simple"></i> Thống kê</a>
                         </li>  
