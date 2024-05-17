@@ -7,7 +7,18 @@ const fs = require('fs');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
 
-
+// Route hiển thị danh sách người dùng
+router.get("/users", async (req, res) => {
+    try {
+      const users = await User.find();
+      res.render("users", { users }); // Render template "users" với danh sách người dùng
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).send("Internal server error");
+    }
+  });
+  
+  module.exports = router;
 
 // Route hiển thị trang đăng nhập
 router.get("/login", (req, res) => {
