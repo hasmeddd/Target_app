@@ -3,7 +3,11 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const session = require('express-session');
-
+const nodemailer = require("nodemailer");
+const cron = require('node-cron');
+const Event = require('./models/events');
+const User = require('./models/users');
+const notificationService = require('./services_notification/notification');
 
 const app = express();
 const PORT = process.env.PORT || 4000
@@ -44,4 +48,8 @@ app.use("", require('./routes/routes'))
 app.listen(PORT, () => {
     console.log(`Server started at http://localhost:${PORT}`);
 })
+
+cron.schedule('15 00 * * *', async () => {
+    await notificationService.checkAndSendNotification();
+});
 
