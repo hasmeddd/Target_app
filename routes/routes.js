@@ -8,18 +8,59 @@ const bcrypt = require('bcrypt');
 const session = require('express-session');
 
 // Route hiển thị danh sách người dùng
-router.get("/users", async (req, res) => {
+router.get("/admin", async (req, res) => {
     try {
       const users = await User.find();
-      res.render("users", { users }); // Render template "users" với danh sách người dùng
+      res.render("admin", { users }); // Render template "users" với danh sách người dùng
     } catch (error) {
       console.error("Error fetching users:", error);
       res.status(500).send("Internal server error");
     }
   });
-  
+
   module.exports = router;
 
+
+  // GET route to render the add_users.ejs template
+router.get('/add_users', (req, res) => {
+  res.render('add_users');
+});
+
+// POST route to handle user creation
+router.post('/add_users', async (req, res) => {
+  const { username, password, email, role } = req.body;
+
+  try {
+    // Create a new User instance
+    const newUser = new User({
+        username: {
+            type: String,
+            unique: true,
+        },
+        password: {
+            type: String,
+    
+        },
+        email: {
+            type: String,
+        },
+        role: {
+            type: Boolean,
+            default: false 
+        }
+    });
+
+    // Save the user to the database
+    await newUser.save();
+
+    res.redirect('/userlist'); // Redirect to the user list page
+  } catch (error) {
+    console.error('Error saving user:', error);
+    res.redirect('/add_users'); // Redirect back to the add user page on error
+  }
+});
+
+module.exports = router;
 // Route hiển thị trang đăng nhập
 router.get("/login", (req, res) => {
     const user = req.session.user;
