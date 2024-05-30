@@ -104,12 +104,40 @@ p {
     border-top-right-radius: 5px;
 }
 
-.container1 {
-    max-width: 800px;
-    margin: 0 auto;
-    background-color: #fff;
+.header-admin {
+    margin-top: 10px;
+    background-color: #0d86ff;
     border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    color: #fff;
 }
 
+table {
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-top: 20px; 
+}
 
+th, td {
+    border: 1px solid #020202; 
+    padding: 8px; 
+    text-align: left; 
+}
+
+th {
+    color: #fff;
+    background-color: #4b4b4b;
+}
+.btus {
+    font-size: 20px;
+    text-align: center;
+    border-radius: 10px;
+    background-color: #0d86ff;
+    padding: 10px;
+    display: inline-block;
+    margin-top: 10px;
+}
+.btus a {
+    color: #fff;
+    text-decoration: none;
+}

@@ -1,0 +1,51 @@
+<%- include('layout/header', { title: 'Quản lí người dùng', user: {} }) %>
+<% if (message) { %>
+    <div id="alert" class="alert alert-dismissible fade show alert-<%= message.type %>" role="alert">
+        <strong><%= message.message %></strong>
+    </div>
+<% } %>
+
+<script>
+    $(document).ready(function(){
+        // Đợi 3 giây sau đó tự động tắt thông báo
+        setTimeout(function(){
+            $("#alert").alert('close');
+        }, 3000);
+    });
+    
+</script>
+<div class="container">
+    <div class="header-admin">
+        <h1>Quản lí người dùng</h1>
+    </div>
+    <table>
+        <tr>
+            <th>Username</th>
+            <th>Password</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Config</th>
+        </tr>
+        <% users.forEach(user => { %>
+            <tr>
+                <td><input type="text" value="<%= user.username %>" ></td>
+                <td><input type="text" value="<%= user.password %>" ></td>
+                <td><input type="text" value="<%= user.email %>" ></td>
+                <td>
+                    <select>
+                        <option value="admin" <%= user.role ? 'selected' : '' %>>Admin</option>
+                        <option value="user" <%= !user.role ? 'selected' : '' %>>User</option>
+                    </select>                                      
+                </td>
+                <td>
+                    <a href="/update_user/<%= user.id %>"class="update-btn">Update</a> |
+                    <a href="/delete_user/<%= user.id %>" class="delete-btn">Delete</a>
+                </td>
+            </tr>
+        <% }); %>
+    </table>
+    <span class="btus add_user"><a href="/add_users">Add user</a></span>
+</div>
+
+
+<%- include('layout/footer') %>

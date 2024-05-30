@@ -8,18 +8,59 @@ const bcrypt = require('bcrypt');
 const session = require('express-session');
 
 // Route hiển thị danh sách người dùng
-router.get("/users", async (req, res) => {
+router.get("/admin", async (req, res) => {
     try {
       const users = await User.find();
-      res.render("users", { users }); // Render template "users" với danh sách người dùng
+      res.render("admin", { users }); // Render template "users" với danh sách người dùng
     } catch (error) {
       console.error("Error fetching users:", error);
       res.status(500).send("Internal server error");
     }
   });
-  
+
   module.exports = router;
 
+
+  // GET route to render the add_users.ejs template
+router.get('/add_users', (req, res) => {
+  res.render('add_users');
+});
+
+// POST route to handle user creation
+router.post('/add_users', async (req, res) => {
+  const { username, password, email, role } = req.body;
+
+  try {
+    // Create a new User instance
+    const newUser = new User({
+        username: {
+            type: String,
+            unique: true,
+        },
+        password: {
+            type: String,
+    
+        },
+        email: {
+            type: String,
+        },
+        role: {
+            type: Boolean,
+            default: false 
+        }
+    });
+
+    // Save the user to the database
+    await newUser.save();
+
+    res.redirect('/userlist'); // Redirect to the user list page
+  } catch (error) {
+    console.error('Error saving user:', error);
+    res.redirect('/add_users'); // Redirect back to the add user page on error
+  }
+});
+
+module.exports = router;
 // Route hiển thị trang đăng nhập
 router.get("/login", (req, res) => {
     const user = req.session.user;
@@ -116,6 +157,7 @@ router.post("/login", async (req, res) => {
         }
 
         const isPasswordMatch = await bcrypt.compare(password, user.password);
+        
         if (isPasswordMatch) {
             // Lưu thông tin người dùng vào session
             req.session.user = user;
@@ -238,4 +280,40 @@ router.get("/report", (req, res) => {
     const user = req.session.user;
     res.render("report", { title: "Thống kê", user: user});
 });
+
+router.post("/create_user", async (req, res) => {
+    const user = req.session.user;
+    const { username, password, email, role } = req.body;
+    
+    // Kiểm tra tính hợp lệ của dữ liệu đầu vào
+    if (!username || !password || !email || !role) {
+      return res.status(400).send("Username, password, email are required");
+    }
+  
+    try {
+        const userRole = (role === "true");
+        const existingUser = await User.findOne({ $or: [{ username }, { email }] });
+        if (existingUser) {
+            req.session.message = { type: 'danger', message: "Tên người dùng hoặc email đã tồn tại" };
+            return res.render("add_users", { title: "Thêm Người Dùng", user: user, message: req.session.message });
+        }
+        // Tạo hash từ mật khẩu người dùng
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+    
+        // Tạo một người dùng mới với mật khẩu đã được hash
+        const newUser = new User({ username, password: hashedPassword, email , role: userRole});
+    
+        // Lưu người dùng vào cơ sở dữ liệu
+        const savedUser = await newUser.save();
+        
+        // Ẩn thông tin nhạy cảm và chuyển hướng đến trang đăng nhập sau khi đăng ký thành công
+        req.session.message = { type: 'success', message: "Tạo tài khoản thành công" };
+        res.redirect('/admin');
+    } catch (error) {
+        console.error("Error signing up:", error);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
 module.exports = router;
