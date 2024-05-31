@@ -141,3 +141,7 @@ th {
     color: #fff;
     text-decoration: none;
 }
+.modal-body table th {
+    color: #fff;
+    background-color: #4b4b4b;
+}

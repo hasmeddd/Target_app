@@ -58,7 +58,7 @@ function update_event() {
     var updatedEventStatus = $('#update_event_status').val(); 
 
     // Kiểm tra xem tất cả các trường đã được điền đầy đủ không
-    if (!updatedEventName || !updatedEventStartDate || !updatedEventStartTime || !updatedEventEndDate || !updatedEventEndTime) {
+    if (!updatedEventName || !updatedEventStartDate || !updatedEventEndDate ) {
         alert("Please fill in all fields for the updated event!");
         return;
     }
@@ -66,8 +66,8 @@ function update_event() {
     // Tạo đối tượng dữ liệu sự kiện cập nhật
     var updatedEventData = {
         title: updatedEventName,
-        start: updatedEventStartDate + 'T' + updatedEventStartTime,
-        end: updatedEventEndDate + 'T' + updatedEventEndTime,
+        start: updatedEventStartDate,
+        end: updatedEventEndDate ,
         details: updatedEventDetails,
         status: updatedEventStatus, // Sử dụng giá trị trạng thái từ dropdown
         more: []
