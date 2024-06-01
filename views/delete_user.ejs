@@ -1,0 +1,11 @@
+<%- include('layout/header', { title: 'Xóa người dùng', user: admin }) %>
+<div class="container">
+    <div class="header-admin">
+    <h1>Xóa người dùng</h1>
+    </div>
+    <form action="/delete_user/<%= user._id %>" method="POST">
+        <p>Bạn có chắc chắn muốn xóa người dùng <%= user.username %>?</p>
+        <button type="submit" class="btn btn-danger">Xóa người dùng</button>
+    </form>
+</div>
+<%- include('layout/footer') %>

@@ -120,7 +120,7 @@ table {
 
 th, td {
     border: 1px solid #020202; 
-    padding: 8px; 
+    padding: 10px; 
     text-align: left; 
 }
 
@@ -145,3 +145,16 @@ th {
     color: #fff;
     background-color: #4b4b4b;
 }
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  tr:hover {
+    background-color: #e6e6e6;
+  }
+
+
+  
+  
+

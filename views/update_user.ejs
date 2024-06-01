@@ -1,0 +1,25 @@
+<%- include('layout/header', { title: 'Cập nhật người dùng', user: admin }) %>
+<div class="container">
+    <div class="header-admin">
+    <h1>Cập nhật người dùng</h1>
+    </div>
+    <form action="/update_user/<%= user._id %>" method="POST">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" id="username" name="username" value="<%= user.username %>" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" id="email" name="email" value="<%= user.email %>" required>
+        </div>
+        <div class="form-group">
+            <label for="role">Quyền:</label>
+            <select class="form-control" id="role" name="role">
+                <option value="true" <%= user.role ? 'selected' : '' %>>Admin</option>
+                <option value="false" <%= !user.role ? 'selected' : '' %>>User</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Update User</button>
+    </form>
+</div>
+<%- include('layout/footer') %>

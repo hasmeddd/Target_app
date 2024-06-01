@@ -1,4 +1,4 @@
-<%- include('layout/header', { title: 'Quản lí người dùng', user: {} }) %>
+<%- include('layout/header', { title: 'Quản lí người dùng', user: admin }) %>
 <% if (message) { %>
     <div id="alert" class="alert alert-dismissible fade show alert-<%= message.type %>" role="alert">
         <strong><%= message.message %></strong>
@@ -28,14 +28,15 @@
         </tr>
         <% users.forEach(user => { %>
             <tr>
-                <td><input type="text" value="<%= user.username %>" ></td>
-                <td><input type="text" value="<%= user.password %>" ></td>
-                <td><input type="text" value="<%= user.email %>" ></td>
+                <td><%= user.username %></td>
+                <td><%= user.password %></td>
+                <td><%= user.email %></td>
                 <td>
-                    <select>
-                        <option value="admin" <%= user.role ? 'selected' : '' %>>Admin</option>
-                        <option value="user" <%= !user.role ? 'selected' : '' %>>User</option>
-                    </select>                                      
+                    <% if (user.role) { %>
+                        Admin
+                    <% } else { %>
+                        User
+                    <% } %>
                 </td>
                 <td>
                     <a href="/update_user/<%= user.id %>"class="update-btn">Update</a> |
