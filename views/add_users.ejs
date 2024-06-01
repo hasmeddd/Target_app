@@ -1,44 +1,35 @@
-<%- include('layout/header', { title: 'Thêm Người Dùng', user: {} }) %>
+<%- include('layout/header', { title: 'Thêm Người Dùng', user: user  }) %>
 <% if (message) { %>
     <div id="alert" class="alert alert-dismissible fade show alert-<%= message.type %>" role="alert">
         <strong><%= message.message %></strong>
     </div>
 <% } %>
-
-<script>
-    $(document).ready(function(){
-        // Đợi 3 giây sau đó tự động tắt thông báo
-        setTimeout(function(){
-            $("#alert").alert('close');
-        }, 3000);
-    });
-</script>
-<div class="container">
+<div class="container mt-5">
     <div class="header-admin">
-        <h1>Thêm người dùng</h1>
+        <h1 class="mb-4">Thêm người dùng</h1>
     </div>
     <form action="/create_user" method="POST">
         <div class="form-group">
             <label for="username">Tên người dùng:</label>
-            <input type="text" id="username" name="username" placeholder="Nhập tên người dùng" required>
+            <input type="text" id="username" name="username" class="form-control" placeholder="Nhập tên người dùng" required>
         </div>
         <div class="form-group">
             <label for="password">Mật khẩu:</label>
-            <input type="password" id="password" name="password" placeholder="Nhập mật khẩu" required>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Nhập mật khẩu" required>
         </div>
         <div class="form-group">
             <label for="email">Email:</label>
-            <input type="email" id="email" name="email" placeholder="Nhập email" required>
+            <input type="email" id="email" name="email" class="form-control" placeholder="Nhập email" required>
         </div>
         <div class="form-group">
             <label for="role">Quyền:</label>
-            <select id="role" name="role" required>
+            <select id="role" name="role" class="form-control" required>
                 <option value="">Chọn quyền</option>
                 <option value="true">Admin</option>
                 <option value="false">User</option>
             </select>
         </div>
-        <button type="submit" class="btn btn-primary">Thêm Người Dùng</button>
+        <button type="submit" class="btn btn-primary mt-3">Thêm Người Dùng</button>
     </form>
 </div>
 
