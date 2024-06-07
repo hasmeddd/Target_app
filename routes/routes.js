@@ -234,10 +234,6 @@ router.post('/delete/:id', async (req, res) => {
     }
 });
 
-router.get("/report", (req, res) => {
-    const user = req.session.user;
-    res.render("report", { title: "Thống kê", user: user});
-});
   // GET route to render the add_users.ejs template
 router.get('/add_users', (req, res) => {
     const admin = req.session.user;
@@ -364,5 +360,18 @@ router.post('/delete_user/:id', async (req, res) => {
         res.status(500).send('Internal server error');
     }
 });
+router.get("/report", async (req, res) => {
+    try {
+        const admin = req.session.user;
+        const userId = req.session.user._id; 
+        const events = await Event.find({ userId }).exec();
+    
+        res.render("report", { title: "Báo cáo sự kiện", events ,user:admin  });
+    } catch (error) {
+        console.error("Lỗi khi tạo báo cáo:", error);
+        res.status(500).send('Lỗi máy chủ nội bộ');
+    }
+});
+
 
 module.exports = router;

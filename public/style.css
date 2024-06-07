@@ -124,10 +124,10 @@ th, td {
     text-align: left; 
 }
 
-th {
+/* th {
     color: #fff;
     background-color: #4b4b4b;
-}
+} */
 .btus {
     font-size: 20px;
     text-align: center;
@@ -150,10 +150,13 @@ tr:nth-child(even) {
     background-color: #f9f9f9;
   }
 
-  tr:hover {
-    background-color: #e6e6e6;
-  }
+tr:hover {
+background-color: #e6e6e6;
+}
 
+.container1 {
+    margin: 20px 10%;
+}
 
   
   
