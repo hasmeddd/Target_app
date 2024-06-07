@@ -35,10 +35,15 @@
         calendar = new FullCalendar.Calendar(calendarEl, {
             selectable: true,
             selectHelper: true,
-            select: function(start,end) {
+            select: function(info) {
+                // Convert to UTC ISO string
+                var startUTC = info.start.toISOString();
+                var endUTC = info.end.toISOString();
+
+                // console.log(startUTC, endUTC);
                 $.ajax({
                     type: 'GET',
-                    url: '/events/date?start=' + start.startStr + '&end=' + start.endStr, // Đường dẫn tới endpoint trên máy chủ để lấy danh sách nhiệm vụ cho ngày được click
+                    url: '/events/date?start=' + startUTC + '&end=' + endUTC, // Đường dẫn tới endpoint trên máy chủ để lấy danh sách nhiệm vụ cho ngày được click
                     success: function(events) {
                         // console.log(events);
                         // Xóa các dòng sự kiện cũ trong bảng trước khi thêm mới
