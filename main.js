@@ -49,7 +49,7 @@ app.listen(PORT, () => {
     console.log(`Server started at http://localhost:${PORT}`);
 })
 
-cron.schedule('15 00 * * *', async () => {
+cron.schedule('00 00 * * *', async () => {
     await notificationService.checkAndSendNotification();
 });
 

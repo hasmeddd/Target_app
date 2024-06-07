@@ -1,5 +1,3 @@
-// notification.js
-
 const nodemailer = require('nodemailer');
 const cron = require('node-cron');
 const Event = require('../models/events');
@@ -15,12 +13,19 @@ const transporter = nodemailer.createTransport({
 });
 
 // Hàm gửi email thông báo
-async function sendEmailNotification(userEmail, eventTitle) {
+async function sendEmailNotification(userEmail, eventTitle, isOverdue) {
+    let message;
+    if (isOverdue) {
+        message = `"${eventTitle}" đã quá hạn.`;
+    } else {
+        message = `Bạn cần hoàn thành công việc "${eventTitle}" trước hạn.`;
+    }
+
     let mailOptions = {
         from: process.env.EMAIL_USER,
         to: userEmail,
-        subject: 'Thông báo về công việc',
-        text: `Bạn cần hoàn thành công việc "${eventTitle}" trước hạn.`
+        subject: 'Thông báo về công việc trên Calendar App',
+        text: message
     };
 
     transporter.sendMail(mailOptions, function(error, info) {
@@ -44,7 +49,8 @@ async function checkAndSendNotification() {
         for (let event of events) {
             const user = await User.findById(event.userId).exec();
             if (user && user.email) {
-                sendEmailNotification(user.email, event.title);
+                const isOverdue = event.end < currentDate;
+                sendEmailNotification(user.email, event.title, isOverdue);
             }
         }
     } catch (error) {
