@@ -1,37 +1,89 @@
 <%- include('layout/header') %>
 
-<div class="container">
+<div class="container1">
     <div class="row">
-        <div class="col-md-3">
-            <!-- Sidebar -->
-            <div class="sidebar">
-                <h2>Danh mục hhhhhhhh</h2>
-                <ul class="nav flex-column">
-                    <li class="nav-item"><a class="nav-link active" href="#">Danh mục 1</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Danh mục 2</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Danh mục 3</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="col-md-9">
-            <!-- Content -->
-            <div class="content">
-                <!-- Your content here -->
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <div class="stats">
-                                <h2>Thống kê tổng quan</h2>
-                                <p><strong>Số người dùng:</strong> 1000</p>
-                                <p><strong>Số bài viết:</strong> 500</p>
-                                <p><strong>Số lượt truy cập:</strong> 10000</p>
-                            </div>
-                            <div class="chart" id="userChart"></div>
-                            <div class="chart" id="postChart"></div>
-                            <div class="chart" id="visitChart"></div>
+        <div class="col-md-2 sidebar bg-light">
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <div class="d-flex justify-content-between">
+                        <div class="form-check">
+                            <input type="radio" name="timeFrame" value="week" id="week" class="form-check-input" checked>
+                            <label for="week" class="form-check-label">Tuần</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="radio" name="timeFrame" value="month" id="month" class="form-check-input">
+                            <label for="month" class="form-check-label">Tháng</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="radio" name="timeFrame" value="year" id="year" class="form-check-input">
+                            <label for="year" class="form-check-label">Năm</label>
                         </div>
                     </div>
-                </div>
+                </li>
+                <li class="list-group-item">
+                    <div class="d-flex justify-content-between">
+                        <div class="form-check">
+                            <input type="radio" name="completionStatus" value="true" id="completed" class="form-check-input" checked>
+                            <label for="completed" class="form-check-label">Đã hoàn thành</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="radio" name="completionStatus" value="false" id="incomplete" class="form-check-input">
+                            <label for="incomplete" class="form-check-label">Chưa hoàn thành</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="radio" name="completionStatus" value="all" id="all" class="form-check-input">
+                            <label for="all" class="form-check-label">Tất cả</label>
+                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div>
+                        <p>Chọn loại biểu đồ:</p>
+                        <div class="form-check">
+                            <input type="radio" name="chartType" value="lineChart" id="lineChart" class="form-check-input">
+                            <label for="lineChart" class="form-check-label">Biểu Đồ Đường</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="radio" name="chartType" value="barChart" id="barChart" class="form-check-input">
+                            <label for="barChart" class="form-check-label">Biểu Đồ Cột</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="radio" name="chartType" value="pieChart" id="pieChart" class="form-check-input">
+                            <label for="pieChart" class="form-check-label">Biểu Đồ Tròn</label>
+                        </div>
+                    </div>
+                    <div class="form-check">
+                        <input type="radio" name="chartType" value="table" id="table" class="form-check-input" checked>
+                        <label for="table" class="form-check-label">Dạng bảng</label>
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <button type="button" class="btn btn-primary">Hiển Thị</button>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-10 content">
+            <div id="eventTableContainer">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Tiêu đề</th>
+                            <th scope="col">Bắt đầu</th>
+                            <th scope="col">Kết thúc</th>
+                            <th scope="col">Hoàn thành</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% events.forEach(event => { %>
+                            <tr>
+                                <td><%= event.title %></td>
+                                <td><%= event.start %></td>
+                                <td><%= event.end %></td>
+                                <td><%= event.status ? 'Đã hoàn thành' : 'Chưa hoàn thành' %></td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
