@@ -23,7 +23,7 @@
                 <li class="list-group-item">
                     <div class="d-flex justify-content-between">
                         <div class="form-check">
-                            <input type="radio" name="completionStatus" value="true" id="completed" class="form-check-input" checked>
+                            <input type="radio" name="completionStatus" value="true" id="completed" class="form-check-input">
                             <label for="completed" class="form-check-label">Đã hoàn thành</label>
                         </div>
                         <div class="form-check">
@@ -31,7 +31,7 @@
                             <label for="incomplete" class="form-check-label">Chưa hoàn thành</label>
                         </div>
                         <div class="form-check">
-                            <input type="radio" name="completionStatus" value="all" id="all" class="form-check-input">
+                            <input type="radio" name="completionStatus" value="all" id="all" class="form-check-input" checked>
                             <label for="all" class="form-check-label">Tất cả</label>
                         </div>
                     </div>
@@ -51,19 +51,22 @@
                             <input type="radio" name="chartType" value="pieChart" id="pieChart" class="form-check-input">
                             <label for="pieChart" class="form-check-label">Biểu Đồ Tròn</label>
                         </div>
-                    </div>
-                    <div class="form-check">
-                        <input type="radio" name="chartType" value="table" id="table" class="form-check-input" checked>
-                        <label for="table" class="form-check-label">Dạng bảng</label>
+                        <div class="form-check">
+                            <input type="radio" name="chartType" value="table" id="table" class="form-check-input" checked>
+                            <label for="table" class="form-check-label">Dạng bảng</label>
+                        </div>
                     </div>
                 </li>
                 <li class="list-group-item">
-                    <button type="button" class="btn btn-primary">Hiển Thị</button>
+                    <button type="button" id="displayButton" class="btn btn-primary">Hiển Thị</button>
                 </li>
             </ul>
         </div>
         <div class="col-md-10 content">
-            <div id="eventTableContainer">
+            <div id="chartContainer" style="display: none;">
+                <canvas id="myChart" data-events="<%= encodeURIComponent(JSON.stringify(events)) %>"></canvas>
+            </div>
+            <div id="eventTableContainer" style="display: block;">
                 <table class="table">
                     <thead>
                         <tr>
@@ -89,5 +92,99 @@
     </div>
 </div>
 
+<script>
+    document.getElementById('displayButton').addEventListener('click', function() {
+        const chartType = document.querySelector('input[name="chartType"]:checked').value;
+        const completionStatus = document.querySelector('input[name="completionStatus"]:checked').value;
+        const chartContainer = document.getElementById('chartContainer');
+        const eventTableContainer = document.getElementById('eventTableContainer');
+        const chartElement = document.getElementById('myChart');
+        const events = JSON.parse(decodeURIComponent(chartElement.dataset.events));
 
+        // Filter events based on completion status
+        let filteredEvents;
+        if (completionStatus === 'true') {
+            filteredEvents = events.filter(event => event.status);
+        } else if (completionStatus === 'false') {
+            filteredEvents = events.filter(event => !event.status);
+        } else {
+            filteredEvents = events;
+        }
+
+        // Reset display
+        chartContainer.style.display = 'none';
+        eventTableContainer.style.display = 'none';
+
+        if (chartType === 'table') {
+            // Update table with filtered events
+            const tbody = eventTableContainer.querySelector('tbody');
+            tbody.innerHTML = '';
+            filteredEvents.forEach(event => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${event.title}</td>
+                    <td>${event.start}</td>
+                    <td>${event.end}</td>
+                    <td>${event.status ? 'Đã hoàn thành' : 'Chưa hoàn thành'}</td>
+                `;
+                tbody.appendChild(row);
+            });
+            eventTableContainer.style.display = 'block';
+        } else {
+            chartContainer.style.display = 'block';
+
+            // Calculate the number of completed and incomplete events
+            const completedCount = filteredEvents.filter(event => event.status).length;
+            const incompleteCount = filteredEvents.length - completedCount;
+
+            // Destroy previous chart instance if exists
+            if (window.myChartInstance) {
+                window.myChartInstance.destroy();
+            }
+
+            // Determine the chart type
+            let chartJsType;
+            switch (chartType) {
+                case 'lineChart':
+                    chartJsType = 'line';
+                    break;
+                case 'barChart':
+                    chartJsType = 'bar';
+                    break;
+                case 'pieChart':
+                    chartJsType = 'pie';
+                    break;
+                default:
+                    chartJsType = 'bar'; // Default to bar chart
+            }
+
+            // Create the chart using Chart.js
+            window.myChartInstance = new Chart(chartElement, {
+                type: chartJsType, // Specify the chart type
+                data: {
+                    labels: ['Đã hoàn thành', 'Chưa hoàn thành'], // Labels for the x-axis
+                    datasets: [{
+                        label: 'Số lượng sự kiện', // Label for the dataset
+                        data: [completedCount, incompleteCount], // Data points for the chart
+                        backgroundColor: chartType === 'pieChart' ? ['#4caf50', '#f44336'] : ['#4caf50', '#f44336'],
+                        borderColor: chartType !== 'pieChart' ? ['#4caf50', '#f44336'] : undefined,
+                        borderWidth: 1 // Border width of the bars
+                    }]
+                },
+                options: {
+                    scales: chartType !== 'pieChart' ? {
+                        y: {
+                            beginAtZero: true // Ensure the y-axis starts at zero
+                        }
+                    } : {}
+                }
+            });
+        }
+    });
+
+    // Ensure the table is displayed by default on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('eventTableContainer').style.display = 'block';
+    });
+</script>
 <%- include('layout/footer') %>

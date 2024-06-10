@@ -360,6 +360,7 @@ router.post('/delete_user/:id', async (req, res) => {
         res.status(500).send('Internal server error');
     }
 });
+//Report
 router.get("/report", async (req, res) => {
     try {
         const admin = req.session.user;
@@ -367,7 +368,7 @@ router.get("/report", async (req, res) => {
         const events = await Event.find({ userId }).exec();
     
         res.render("report", { title: "Báo cáo sự kiện", events ,user:admin  });
-    } catch (error) {
+    } catch (error) { 
         console.error("Lỗi khi tạo báo cáo:", error);
         res.status(500).send('Lỗi máy chủ nội bộ');
     }
