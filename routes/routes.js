@@ -1,70 +1,83 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const User = require('../models/users');
-const Event = require('../models/events');
-const multer = require('multer');
-const fs = require('fs');
-const bcrypt = require('bcrypt');
-const session = require('express-session');
+const User = require("../models/users");
+const Event = require("../models/events");
+const multer = require("multer");
+const fs = require("fs");
+const bcrypt = require("bcrypt");
+const session = require("express-session");
 
 // Route hiển thị danh sách người dùng
 router.get("/admin", async (req, res) => {
     try {
-      const users = await User.find();
-      const admin = req.session.user;
-      res.render("admin", { users , admin}); // Render template "users" với danh sách người dùng
+        const users = await User.find();
+        const admin = req.session.user;
+        res.render("admin", { users, admin }); // Render template "users" với danh sách người dùng
     } catch (error) {
-      console.error("Error fetching users:", error);
-      res.status(500).send("Internal server error");
+        console.error("Error fetching users:", error);
+        res.status(500).send("Internal server error");
     }
 });
 
 // Route hiển thị trang đăng nhập
 router.get("/login", (req, res) => {
     const user = req.session.user;
-    res.render("login", { title: "Đăng nhập", user: user});
+    res.render("login", { title: "Đăng nhập", user: user });
 });
-router.get("/signup", (req,res) =>{
+router.get("/signup", (req, res) => {
     const user = req.session.user;
     res.render("signup", { title: "Đăng ký", user: user });
 });
-
 
 //register User
 router.post("/signup", async (req, res) => {
     const user = req.session.user;
     const { username, password, email } = req.body;
-    
+
     // Kiểm tra tính hợp lệ của dữ liệu đầu vào
     if (!username || !password || !email) {
-      return res.status(400).send("Username and password are required");
+        return res.status(400).send("Username and password are required");
     }
-  
+
     try {
-        const existingUser = await User.findOne({ $or: [{ username }, { email }] });
+        const existingUser = await User.findOne({
+            $or: [{ username }, { email }],
+        });
         if (existingUser) {
-            req.session.message = { type: 'danger', message: "Tên người dùng hoặc email đã tồn tại" };
-            return res.render("signup", { title: "Đăng ký", user: user, message: req.session.message });
+            req.session.message = {
+                type: "danger",
+                message: "Tên người dùng hoặc email đã tồn tại",
+            };
+            return res.render("signup", {
+                title: "Đăng ký",
+                user: user,
+                message: req.session.message,
+            });
         }
         // Tạo hash từ mật khẩu người dùng
         const hashedPassword = await bcrypt.hash(password, 10);
 
-    
         // Tạo một người dùng mới với mật khẩu đã được hash
         const newUser = new User({ username, password: hashedPassword, email });
-    
+
         // Lưu người dùng vào cơ sở dữ liệu
         const savedUser = await newUser.save();
-        
+
         // Ẩn thông tin nhạy cảm và chuyển hướng đến trang đăng nhập sau khi đăng ký thành công
-        req.session.message = { type: 'success', message: "Đăng ký tài khoản thành công" };
-        res.render("login", {title: "Đăng nhập", user: user, message: req.session.message });
+        req.session.message = {
+            type: "success",
+            message: "Đăng ký tài khoản thành công",
+        };
+        res.render("login", {
+            title: "Đăng nhập",
+            user: user,
+            message: req.session.message,
+        });
     } catch (error) {
         console.error("Error signing up:", error);
         res.status(500).send("Internal Server Error");
     }
 });
-
 
 // Route hiển thị trang chủ
 router.get("/", async (req, res) => {
@@ -86,10 +99,19 @@ router.get("/", async (req, res) => {
         const events = await Event.find({ userId }).exec();
 
         // Render trang chủ với danh sách sự kiện
-        if (message && typeof message === 'object') {
-            res.render('index', { title: "Calendar App", events: events, user: user, message });
+        if (message && typeof message === "object") {
+            res.render("index", {
+                title: "Calendar App",
+                events: events,
+                user: user,
+                message,
+            });
         } else {
-            res.render('index', { title: "Calendar App", events: events, user: user });
+            res.render("index", {
+                title: "Calendar App",
+                events: events,
+                user: user,
+            });
         }
     } catch (error) {
         console.error("Error fetching events:", error);
@@ -102,39 +124,50 @@ router.post("/login", async (req, res) => {
     try {
         const { username, password } = req.body;
         const user = await User.findOne({ username });
-        
+
         // console.log(user)
         // console.log(username, password)
-        
+
         if (!user) {
             req.session.message = {
-                type: 'danger',
-                message: 'User không tồn tại'
+                type: "danger",
+                message: "User không tồn tại",
             };
-            return res.render("login", { message: req.session.message, title: "Login", user });
+            return res.render("login", {
+                message: req.session.message,
+                title: "Login",
+                user,
+            });
         }
 
         const isPasswordMatch = await bcrypt.compare(password, user.password);
-        
+
         if (isPasswordMatch) {
             // Lưu thông tin người dùng vào session
             req.session.user = user;
             req.session.message = {
-                type: 'success',
-                message: 'Đăng nhập thành công'
+                type: "success",
+                message: "Đăng nhập thành công",
             };
             // console.log(user);
             return res.redirect("/"); // Chuyển hướng đến trang chủ sau khi đăng nhập thành công
         } else {
             req.session.message = {
-                type: 'danger',
-                message: 'Sai mật khẩu'
+                type: "danger",
+                message: "Sai mật khẩu",
             };
-            return res.render("login", { message: req.session.message, title: "Login", user });
+            return res.render("login", {
+                message: req.session.message,
+                title: "Login",
+                user,
+            });
         }
     } catch (error) {
         console.error("Error logging in:", error);
-        return res.render("login", { error: "Internal server error", title: "Login" });
+        return res.render("login", {
+            error: "Internal server error",
+            title: "Login",
+        });
     }
 });
 // Assuming you have Express.js setup
@@ -152,8 +185,8 @@ router.get("/logout", (req, res) => {
 
 router.get("/events", async (req, res) => {
     try {
-        const userId = req.session.user._id;  // Thay bằng const userId = req.user.id; khi đã thực hiện xác thực người dùng
-        const events = await Event.find({ userId, status: false  }).exec(); // Lấy danh sách sự kiện của một người dùng cụ thể
+        const userId = req.session.user._id; // Thay bằng const userId = req.user.id; khi đã thực hiện xác thực người dùng
+        const events = await Event.find({ userId, status: false }).exec(); // Lấy danh sách sự kiện của một người dùng cụ thể
         res.json(events); // Trả về danh sách sự kiện dưới dạng JSON
     } catch (error) {
         console.error("Error fetching events:", error);
@@ -167,7 +200,12 @@ router.get("/events/date", async (req, res) => {
         const endDate = req.query.end; // Lấy ngày kết thúc từ tham số trên URL
         const userId = req.session.user._id; // Thay bằng const userId = req.user.id; khi đã thực hiện xác thực người dùng
         // Thực hiện truy vấn cơ sở dữ liệu để lấy danh sách sự kiện trong khoảng thời gian được yêu cầu
-        const events = await Event.find({ userId, start: { $gte: startDate }, end: { $lte: endDate } , status: false  }).exec();
+        const events = await Event.find({
+            userId,
+            start: { $gte: startDate },
+            end: { $lte: endDate },
+            status: false,
+        }).exec();
         res.json(events); // Trả về danh sách sự kiện dưới dạng JSON
     } catch (error) {
         console.error("Error fetching events:", error);
@@ -175,31 +213,30 @@ router.get("/events/date", async (req, res) => {
     }
 });
 
-
-router.post('/addEvent', async(req,res) => {
+router.post("/addEvent", async (req, res) => {
     try {
         const userId = req.session.user._id; // thay bằng const userId = req.user.id; khi làm đăng nhập là xong
         const eventData = req.body;
         const newEvent = new Event({
-            title:eventData.title,
-            start:eventData.start,
-            end:eventData.end,
-            details:eventData.details,
+            title: eventData.title,
+            start: eventData.start,
+            end: eventData.end,
+            details: eventData.details,
             status: eventData.status, // Thêm status
             more: eventData.more,
-            userId:userId,
+            userId: userId,
         });
         // Lưu sự kiện mới vào cơ sở dữ liệu
         await newEvent.save();
-        res.status(201).send('Sự kiện đã được tạo thành công');
+        res.status(201).send("Sự kiện đã được tạo thành công");
     } catch (error) {
         console.error("Lỗi khi tạo sự kiện:", error);
-        res.status(500).send('Lỗi máy chủ nội bộ');
+        res.status(500).send("Lỗi máy chủ nội bộ");
     }
 });
 
 // Cập nhật sự kiện route
-router.post('/update/:id', async (req, res) => {
+router.post("/update/:id", async (req, res) => {
     try {
         const eventId = req.params.id; // Lấy id của sự kiện cần cập nhật từ URL
         const eventData = req.body;
@@ -212,167 +249,215 @@ router.post('/update/:id', async (req, res) => {
             details: eventData.details,
             status: eventData.status, // Thêm status
             more: eventData.more,
-            userId: userId
-        })
-        res.status(200).send('Sự kiện đã cập nhật thành công');
-    }
-    catch (error) {
+            userId: userId,
+        });
+        res.status(200).send("Sự kiện đã cập nhật thành công");
+    } catch (error) {
         console.error("Lỗi cập nhật sự kiện:", error);
-        res.status(500).send('Lỗi máy chủ nội bộ');
-    }        
+        res.status(500).send("Lỗi máy chủ nội bộ");
+    }
 });
 
-
-router.post('/delete/:id', async (req, res) => {
+router.post("/delete/:id", async (req, res) => {
     try {
         const eventId = req.params.id; // Lấy id của sự kiện cần xóa từ URL
         await Event.findByIdAndDelete(eventId); // Xóa sự kiện từ cơ sở dữ liệu
-        res.status(200).send('Event deleted successfully');
+        res.status(200).send("Event deleted successfully");
     } catch (error) {
         console.error("Error deleting event:", error);
-        res.status(500).send('Internal server error');
+        res.status(500).send("Internal server error");
     }
 });
 
-  // GET route to render the add_users.ejs template
-router.get('/add_users', (req, res) => {
+// GET route to render the add_users.ejs template
+router.get("/add_users", (req, res) => {
     const admin = req.session.user;
-    res.render('add_users', {user: admin} );
+    res.render("add_users", { user: admin });
 });
 
 router.post("/create_user", async (req, res) => {
     const admin = req.session.user;
     const { username, password, email, role } = req.body;
-    
+
     // Kiểm tra tính hợp lệ của dữ liệu đầu vào
     if (!username || !password || !email || !role) {
-        req.session.message = { type: 'danger', message: "Vui lòng điền đầy đủ thông tin và chọn quyền hợp lệ." };
-        return res.render("add_users", { title: "Thêm Người Dùng", user: admin, message: req.session.message })
+        req.session.message = {
+            type: "danger",
+            message: "Vui lòng điền đầy đủ thông tin và chọn quyền hợp lệ.",
+        };
+        return res.render("add_users", {
+            title: "Thêm Người Dùng",
+            user: admin,
+            message: req.session.message,
+        });
     }
-  
+
     try {
-        const userRole = (role === "true");
-        const existingUser = await User.findOne({ $or: [{ username }, { email }] });
+        const userRole = role === "true";
+        const existingUser = await User.findOne({
+            $or: [{ username }, { email }],
+        });
         if (existingUser) {
-            req.session.message = { type: 'danger', message: "Tên người dùng hoặc email đã tồn tại" };
-            return res.render("add_users", { title: "Thêm Người Dùng", user: admin, message: req.session.message });
+            req.session.message = {
+                type: "danger",
+                message: "Tên người dùng hoặc email đã tồn tại",
+            };
+            return res.render("add_users", {
+                title: "Thêm Người Dùng",
+                user: admin,
+                message: req.session.message,
+            });
         }
         // Tạo hash từ mật khẩu người dùng
         const hashedPassword = await bcrypt.hash(password, 10);
 
-    
         // Tạo một người dùng mới với mật khẩu đã được hash
-        const newUser = new User({ username, password: hashedPassword, email , role: userRole});
-    
+        const newUser = new User({
+            username,
+            password: hashedPassword,
+            email,
+            role: userRole,
+        });
+
         // Lưu người dùng vào cơ sở dữ liệu
         const savedUser = await newUser.save();
-        
+
         // Ẩn thông tin nhạy cảm và chuyển hướng đến trang đăng nhập sau khi đăng ký thành công
-        req.session.message = { type: 'success', message: "Tạo tài khoản thành công" };
-        res.redirect('/admin');
+        req.session.message = {
+            type: "success",
+            message: "Tạo tài khoản thành công",
+        };
+        res.redirect("/admin");
     } catch (error) {
         console.error("Error signing up:", error);
         res.status(500).send("Internal Server Error");
     }
 });
 
-router.get('/update_user/:id', async (req, res) => {
+router.get("/update_user/:id", async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
         const admin = req.session.user;
         if (!user) {
-            req.session.message = { type: 'danger', message: "Người dùng không tồn tại" };
-            return res.redirect('/admin');
+            req.session.message = {
+                type: "danger",
+                message: "Người dùng không tồn tại",
+            };
+            return res.redirect("/admin");
         }
-        res.render('update_user', { title: 'Cập nhật người dùng', user,admin });
+        res.render("update_user", {
+            title: "Cập nhật người dùng",
+            user,
+            admin,
+        });
     } catch (error) {
-        console.error('Error fetching user:', error);
-        res.status(500).send('Internal server error');
+        console.error("Error fetching user:", error);
+        res.status(500).send("Internal server error");
     }
 });
 
 // POST route to handle user update
-router.post('/update_user/:id', async (req, res) => {
+router.post("/update_user/:id", async (req, res) => {
     try {
         const { username, email, role } = req.body;
         const user = await User.findById(req.params.id);
         if (!user) {
-            req.session.message = { type: 'danger', message: "Người dùng không tồn tại" };
-            return res.redirect('/admin');
+            req.session.message = {
+                type: "danger",
+                message: "Người dùng không tồn tại",
+            };
+            return res.redirect("/admin");
         }
 
         user.username = username;
         user.email = email;
-        user.role = role === 'true';
+        user.role = role === "true";
         await user.save();
 
-        req.session.message = { type: 'success', message: "Cập nhật người dùng thành công" };
-        res.redirect('/admin');
+        req.session.message = {
+            type: "success",
+            message: "Cập nhật người dùng thành công",
+        };
+        res.redirect("/admin");
     } catch (error) {
-        console.error('Error updating user:', error);
-        res.status(500).send('Internal server error');
+        console.error("Error updating user:", error);
+        res.status(500).send("Internal server error");
     }
 });
 
 // GET route to render the deletion confirmation page
-router.get('/delete_user/:id', async (req, res) => {
+router.get("/delete_user/:id", async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
         const admin = req.session.user; // Retrieve logged-in user from session
 
         if (!user) {
-            req.session.message = { type: 'danger', message: "Người dùng không tồn tại" };
-            return res.redirect('/admin');
+            req.session.message = {
+                type: "danger",
+                message: "Người dùng không tồn tại",
+            };
+            return res.redirect("/admin");
         }
 
         if (user.role) {
-            req.session.message = { type: 'danger', message: "Bạn không thể xóa tài khoản admin" };
-            return res.redirect('/admin');
+            req.session.message = {
+                type: "danger",
+                message: "Bạn không thể xóa tài khoản admin",
+            };
+            return res.redirect("/admin");
         }
 
-        res.render('delete_user', { title: 'Xóa người dùng', user, admin });
+        res.render("delete_user", { title: "Xóa người dùng", user, admin });
     } catch (error) {
-        console.error('Error fetching user:', error);
-        res.status(500).send('Internal server error');
+        console.error("Error fetching user:", error);
+        res.status(500).send("Internal server error");
     }
 });
 
 // POST route to handle user deletion
-router.post('/delete_user/:id', async (req, res) => {
+router.post("/delete_user/:id", async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
 
         if (!user) {
-            req.session.message = { type: 'danger', message: "Người dùng không tồn tại" };
-            return res.redirect('/admin');
+            req.session.message = {
+                type: "danger",
+                message: "Người dùng không tồn tại",
+            };
+            return res.redirect("/admin");
         }
 
         if (user.role) {
-            req.session.message = { type: 'danger', message: "Bạn không thể xóa tài khoản admin" };
-            return res.redirect('/admin');
+            req.session.message = {
+                type: "danger",
+                message: "Bạn không thể xóa tài khoản admin",
+            };
+            return res.redirect("/admin");
         }
 
         await User.findByIdAndDelete(req.params.id);
-        req.session.message = { type: 'success', message: "Xóa người dùng thành công" };
-        res.redirect('/admin');
+        req.session.message = {
+            type: "success",
+            message: "Xóa người dùng thành công",
+        };
+        res.redirect("/admin");
     } catch (error) {
-        console.error('Error deleting user:', error);
-        res.status(500).send('Internal server error');
+        console.error("Error deleting user:", error);
+        res.status(500).send("Internal server error");
     }
 });
 //Report
 router.get("/report", async (req, res) => {
     try {
         const admin = req.session.user;
-        const userId = req.session.user._id; 
+        const userId = req.session.user._id;
         const events = await Event.find({ userId }).exec();
-    
-        res.render("report", { title: "Báo cáo sự kiện", events ,user:admin  });
-    } catch (error) { 
+
+        res.render("report", { title: "Báo cáo sự kiện", events, user: admin });
+    } catch (error) {
         console.error("Lỗi khi tạo báo cáo:", error);
-        res.status(500).send('Lỗi máy chủ nội bộ');
+        res.status(500).send("Lỗi máy chủ nội bộ");
     }
 });
-
 
 module.exports = router;
